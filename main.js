@@ -7,9 +7,6 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 import * as dat from "dat.gui";
 import { DirectionalLight } from "three";
-import backGround from "./img/1.jpg";
-import backGround1 from "./img/2.jpg";
-import backGround2 from "./img/3.jpg";
 
 const scene = new THREE.Scene();
 
@@ -78,7 +75,7 @@ const sphere = new THREE.Mesh(sphereGeo, sphereMat);
 const manager = new THREE.LoadingManager();
 const loader = new THREE.TextureLoader(manager);
 
-loader.load("./img/IMG_3917 Panorama.jpg", function (texture) {
+loader.load("/room.jpg", function (texture) {
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.minFilter = THREE.NearestFilter;
   texture.generateMipmaps = false;
@@ -128,37 +125,38 @@ const options = {
   lightColor: 0xffffff,
   rotateX: 0,
   rotateY: 0,
-  zoom: 1,
+  zoom: 0.5,
 };
 
-camera.zoom = -10;
+camera.zoom = 0.5;
+camera.updateProjectionMatrix();
 // obj Gui
 const gui = new dat.GUI();
 gui.add(options, "zoom", 0.01, 3, 0.01).onChange((e) => {
   camera.zoom = e;
   camera.updateProjectionMatrix();
 });
-gui.addColor(options, "torusColor").onChange((e) => {
-  torus.material.color.set(e);
-});
-gui.add(options, "wireFrame").onChange((e) => {
-  torus.material.wireframe = e;
-});
-gui.add(options, "torusY", 0, 60, 1).onChange((e) => {
-  torus.position.y = e;
-});
-gui.add(options, "torusX", -60, 60, 1).onChange((e) => {
-  torus.position.x = e;
-});
-gui.add(options, "torusZ", -60, 60, 1).onChange((e) => {
-  torus.position.z = e;
-});
-gui.add(options, "rotateX", -90, 90, 0.5).onChange((e) => {
-  torus.rotation.x = e;
-});
-gui.add(options, "rotateY", -90, 90, 0.5).onChange((e) => {
-  torus.rotation.y = e;
-});
+// gui.addColor(options, "torusColor").onChange((e) => {
+//   torus.material.color.set(e);
+// });
+// gui.add(options, "wireFrame").onChange((e) => {
+//   torus.material.wireframe = e;
+// });
+// gui.add(options, "torusY", 0, 60, 1).onChange((e) => {
+//   torus.position.y = e;
+// });
+// gui.add(options, "torusX", -60, 60, 1).onChange((e) => {
+//   torus.position.x = e;
+// });
+// gui.add(options, "torusZ", -60, 60, 1).onChange((e) => {
+//   torus.position.z = e;
+// });
+// gui.add(options, "rotateX", -90, 90, 0.5).onChange((e) => {
+//   torus.rotation.x = e;
+// });
+// gui.add(options, "rotateY", -90, 90, 0.5).onChange((e) => {
+//   torus.rotation.y = e;
+// });
 gui.open();
 // light gui
 const lightOptions = {
@@ -170,26 +168,26 @@ const lightOptions = {
   penumbra: 0,
   intensity: 1,
 };
-const lightGui = new dat.GUI();
+// const lightGui = new dat.GUI();
 
-lightGui.addColor(lightOptions, "lightColor");
-lightGui.add(lightOptions, "lightY", 0, 100, 1);
+// lightGui.addColor(lightOptions, "lightColor");
+// lightGui.add(lightOptions, "lightY", 0, 100, 1);
 
-lightGui.add(lightOptions, "lightX", -100, 100, 1);
+// lightGui.add(lightOptions, "lightX", -100, 100, 1);
 
-lightGui.add(lightOptions, "lightZ", -100, 100, 1);
+// lightGui.add(lightOptions, "lightZ", -100, 100, 1);
 
-lightGui.add(lightOptions, "angle", 0, 1, 0.1);
-lightGui.add(lightOptions, "penumbra", 0, 1, 0.1);
-lightGui.add(lightOptions, "intensity", 0, 4, 0.1);
-lightGui.close();
+// lightGui.add(lightOptions, "angle", 0, 1, 0.1);
+// lightGui.add(lightOptions, "penumbra", 0, 1, 0.1);
+// lightGui.add(lightOptions, "intensity", 0, 4, 0.1);
+// lightGui.close();
 
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 const TextureLoader = new THREE.TextureLoader();
 const BoxGeometry = new THREE.BoxGeometry(4, 4, 4);
-const BoxMaterial = new THREE.MeshBasicMaterial({
-  map: TextureLoader.load(backGround1),
-});
+// const BoxMaterial = new THREE.MeshBasicMaterial({
+//   map: TextureLoader.load(backGround1),
+// });
 // const box = new THREE.Mesh(BoxGeometry, [
 //   new THREE.MeshBasicMaterial({ color: "#FF0000", side: THREE.DoubleSide }),
 //   new THREE.MeshBasicMaterial({ color: "#00FF00", side: THREE.DoubleSide }),
