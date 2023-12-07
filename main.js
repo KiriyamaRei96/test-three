@@ -2,11 +2,8 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 import * as dat from "dat.gui";
-import { DirectionalLight } from "three";
 
 const scene = new THREE.Scene();
 
@@ -23,34 +20,16 @@ scene.add(ambientLight);
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector("#bg"),
 });
-// const directionalLight = new THREE.DirectionalLight(0xfffffff, 1);
-// scene.add(directionalLight);
-// const directionalHelper = new THREE.DirectionalLightHelper(
-//   directionalLight,
-//   10
-// );
-// const directionalShadow = new THREE.CameraHelper(
-//   directionalLight.shadow.camera
-// );
-// scene.add(directionalHelper);
-// scene.add(directionalShadow);
-// directionalLight.shadow.camera.top = 50;
-// directionalLight.shadow.camera.bottom = -50;
-// directionalLight.shadow.camera.left = -50;
-// directionalLight.shadow.camera.right = 50;
-// directionalLight.castShadow = true;
-// scene.background = TextureLoader.load();
 
-// const spotLight = new THREE.SpotLight(0xfffffff);
-// scene.add(spotLight);
-// spotLight.castShadow = true;
-// const SLightHelper = new THREE.SpotLightHelper(spotLight);
-// scene.add(SLightHelper);
 renderer.shadowMap.enabled = false;
 renderer.setPixelRatio(window.devicePixelRatio);
 const orbit = new OrbitControls(camera, renderer.domElement);
-camera.position.set(0.001, 0.001, 0.001);
+camera.position.set(0.00001, 0.00001, 0.00001);
+orbit.minDistance = 0.00001;
+orbit.maxDistance = 0.00001;
+
 orbit.update();
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 const transformControl = new TransformControls(camera, renderer.domElement);
@@ -69,18 +48,43 @@ const sphereGeo = new THREE.SphereGeometry(6, 102, 102);
 
 const sphereMat = new THREE.MeshStandardMaterial({
   side: THREE.DoubleSide,
+
   // displacementScale: 50,
 });
 const sphere = new THREE.Mesh(sphereGeo, sphereMat);
 const manager = new THREE.LoadingManager();
 const loader = new THREE.TextureLoader(manager);
+camera.zoom = 0.5;
+camera.updateProjectionMatrix();
+function searchToObject() {
+  var pairs = window.location.search.substring(1).split("&"),
+    obj = {},
+    pair,
+    i;
 
-loader.load("/room.jpg", function (texture) {
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.minFilter = THREE.NearestFilter;
-  texture.generateMipmaps = false;
-  sphere.material.map = texture;
-});
+  for (i in pairs) {
+    if (pairs[i] === "") continue;
+
+    pair = pairs[i].split("=");
+    obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+  }
+
+  return obj;
+}
+const search = searchToObject();
+
+loader.load(
+  search.img ||
+    window.location.origin +
+      window.location.pathname.replace("index.html", "") +
+      "room.jpg",
+  function (texture) {
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.NearestFilter;
+    texture.generateMipmaps = false;
+    sphere.material.map = texture;
+  }
+);
 
 // loader.load("./img/depth.png", function (depth) {
 //   depth.minFilter = THREE.NearestFilter;
@@ -111,52 +115,28 @@ const plance = new THREE.Mesh(planceGeo, planceMaterial);
 // scene.add(plance);
 const grid = new THREE.GridHelper(60);
 plance.receiveShadow = true;
-scene.add(grid);
+// scene.add(grid);
 
 plance.rotation.x = 0.5 * Math.PI;
-const axesHelper = new THREE.AxesHelper(15);
-scene.add(axesHelper);
+// const axesHelper = new THREE.AxesHelper(15);
+// scene.add(axesHelper);
 const options = {
   torusColor: 0x1dbb,
   wireFrame: false,
-  torusY: 15,
-  torusX: 0,
-  torusZ: 0,
-  lightColor: 0xffffff,
-  rotateX: 0,
-  rotateY: 0,
+
   zoom: 0.5,
 };
 
-camera.zoom = 0.5;
-camera.updateProjectionMatrix();
 // obj Gui
 const gui = new dat.GUI();
 gui.add(options, "zoom", 0.01, 3, 0.01).onChange((e) => {
   camera.zoom = e;
   camera.updateProjectionMatrix();
 });
-// gui.addColor(options, "torusColor").onChange((e) => {
-//   torus.material.color.set(e);
-// });
-// gui.add(options, "wireFrame").onChange((e) => {
-//   torus.material.wireframe = e;
-// });
-// gui.add(options, "torusY", 0, 60, 1).onChange((e) => {
-//   torus.position.y = e;
-// });
-// gui.add(options, "torusX", -60, 60, 1).onChange((e) => {
-//   torus.position.x = e;
-// });
-// gui.add(options, "torusZ", -60, 60, 1).onChange((e) => {
-//   torus.position.z = e;
-// });
-// gui.add(options, "rotateX", -90, 90, 0.5).onChange((e) => {
-//   torus.rotation.x = e;
-// });
-// gui.add(options, "rotateY", -90, 90, 0.5).onChange((e) => {
-//   torus.rotation.y = e;
-// });
+
+gui.add(options, "wireFrame").onChange((e) => {
+  sphere.material.wireframe = e;
+});
 gui.open();
 // light gui
 const lightOptions = {
@@ -168,52 +148,27 @@ const lightOptions = {
   penumbra: 0,
   intensity: 1,
 };
-// const lightGui = new dat.GUI();
 
-// lightGui.addColor(lightOptions, "lightColor");
-// lightGui.add(lightOptions, "lightY", 0, 100, 1);
-
-// lightGui.add(lightOptions, "lightX", -100, 100, 1);
-
-// lightGui.add(lightOptions, "lightZ", -100, 100, 1);
-
-// lightGui.add(lightOptions, "angle", 0, 1, 0.1);
-// lightGui.add(lightOptions, "penumbra", 0, 1, 0.1);
-// lightGui.add(lightOptions, "intensity", 0, 4, 0.1);
-// lightGui.close();
-
-const cubeTextureLoader = new THREE.CubeTextureLoader();
-const TextureLoader = new THREE.TextureLoader();
-const BoxGeometry = new THREE.BoxGeometry(4, 4, 4);
-// const BoxMaterial = new THREE.MeshBasicMaterial({
-//   map: TextureLoader.load(backGround1),
-// });
-// const box = new THREE.Mesh(BoxGeometry, [
-//   new THREE.MeshBasicMaterial({ color: "#FF0000", side: THREE.DoubleSide }),
-//   new THREE.MeshBasicMaterial({ color: "#00FF00", side: THREE.DoubleSide }),
-//   new THREE.MeshBasicMaterial({ color: "#0000FF", side: THREE.DoubleSide }),
-//   new THREE.MeshBasicMaterial({ color: "#FFFFFF", side: THREE.DoubleSide }),
-//   new THREE.MeshBasicMaterial({ color: "#808080", side: THREE.DoubleSide }),
-//   new THREE.MeshBasicMaterial({
-//     map: TextureLoader.load(backGround1),
-//     side: THREE.DoubleSide,
-//   }),
-// ]);
-// scene.add(box);
-// box.position.set(15, 20, 15);
-// box.material.map();
-// scene.background = cubeTextureLoader.load([
-//   backGround2,
-//   backGround2,
-//   backGround2,
-//   backGround2,
-//   backGround2,
-//   backGround2,
-// ]);
-
-// const boxId = box.id;
 const TorusUid = torus.uuid;
 const mousePosition = new THREE.Vector2();
+let scale = 0.5;
+function zoom(event) {
+  event.preventDefault();
+  if (3 >= scale && scale >= 0.01) {
+    scale += event.deltaY * -0.0004;
+  }
+  if (scale > 3) {
+    scale = 3;
+  }
+  if (scale < 0.01) {
+    scale = 0.01;
+  }
+
+  camera.zoom = Math.min(Math.max(0.05, scale), 4).toFixed(2);
+  camera.updateProjectionMatrix();
+}
+
+renderer.domElement.onwheel = zoom;
 window.addEventListener("mousemove", (e) => {
   mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
   mousePosition.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -238,12 +193,6 @@ window.addEventListener("keydown", (e) => {
 
 const rayCaster = new THREE.Raycaster();
 
-// box.geometry.attributes.position.array[0] -= -2;
-// box.geometry.attributes.position.array[1] -= 2;
-// box.geometry.attributes.position.array[2] -= 2;
-// box.geometry.attributes.position.array[3] -= -2;
-// box.geometry.attributes.position.array[4] -= 2;
-// box.geometry.attributes.position.array[5] -= 2;
 window.addEventListener("resize", () => {
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -252,14 +201,6 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
 });
-
-// const gltfLoader = new GLTFLoader();
-// gltfLoader.load("./mau 20.glb", (glft) => {
-//   const obj = glft.scene;
-//   obj.position.set(0, 10, 0);
-//   obj.scale.set(5, 5, 5);
-//   scene.add(obj);
-// });
 
 function animate() {
   requestAnimationFrame(animate);
