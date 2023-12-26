@@ -1,14 +1,11 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { TransformControls } from "three/examples/jsm/controls/TransformControls";
-
-import * as dat from "dat.gui";
 
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-  45,
+  75,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
@@ -32,18 +29,6 @@ orbit.update();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-const transformControl = new TransformControls(camera, renderer.domElement);
-// transformControl.addEventListener( 'change', animate );
-
-transformControl.addEventListener("dragging-changed", function (event) {
-  orbit.enabled = !event.value;
-});
-scene.add(transformControl);
-const geometry = new THREE.TorusGeometry(5, 3, 20, 100);
-const material = new THREE.MeshStandardMaterial({
-  color: 0x1dbb,
-  wireframe: false,
-});
 const sphereGeo = new THREE.SphereGeometry(6, 102, 102);
 
 const sphereMat = new THREE.MeshStandardMaterial({
@@ -72,7 +57,11 @@ function searchToObject() {
   return obj;
 }
 const search = searchToObject();
-
+const loadingDiv = document.getElementsByClassName("loader")[0];
+manager.onStart = function (url, number, total) {
+  loadingDiv.classList.remove("d-none");
+};
+manager.onProgress = function (url, loaded, total) {};
 loader.load(
   search.img ||
     window.location.origin +
@@ -95,62 +84,11 @@ loader.load(
 // On load complete add the panoramic sphere to the scene
 manager.onLoad = function () {
   scene.add(sphere);
+  loadingDiv.classList.add("d-none");
   // sphere.position.y = 10;
   // sphere.position.x = -30;
 };
 
-const torus = new THREE.Mesh(geometry, material);
-// scene.add(torus);
-torus.castShadow = true;
-torus.position.y = 15;
-torus.position.x = 30;
-
-const planceGeo = new THREE.PlaneGeometry(60, 60);
-const planceMaterial = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-  side: THREE.DoubleSide,
-});
-const plance = new THREE.Mesh(planceGeo, planceMaterial);
-
-// scene.add(plance);
-const grid = new THREE.GridHelper(60);
-plance.receiveShadow = true;
-// scene.add(grid);
-
-plance.rotation.x = 0.5 * Math.PI;
-// const axesHelper = new THREE.AxesHelper(15);
-// scene.add(axesHelper);
-const options = {
-  torusColor: 0x1dbb,
-  wireFrame: false,
-
-  zoom: 0.5,
-};
-
-// obj Gui
-const gui = new dat.GUI();
-gui.add(options, "zoom", 0.01, 3, 0.01).onChange((e) => {
-  camera.zoom = e;
-  camera.updateProjectionMatrix();
-});
-
-gui.add(options, "wireFrame").onChange((e) => {
-  sphere.material.wireframe = e;
-});
-gui.open();
-// light gui
-const lightOptions = {
-  lightColor: 0xffffff,
-  lightX: 0,
-  lightY: 100,
-  lightZ: 0,
-  angle: 0.2,
-  penumbra: 0,
-  intensity: 1,
-};
-
-const TorusUid = torus.uuid;
-const mousePosition = new THREE.Vector2();
 let scale = 0.5;
 function zoom(event) {
   event.preventDefault();
@@ -169,29 +107,10 @@ function zoom(event) {
 }
 
 renderer.domElement.onwheel = zoom;
-window.addEventListener("mousemove", (e) => {
-  mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
-  mousePosition.y = -(e.clientY / window.innerHeight) * 2 + 1;
-});
-
-window.addEventListener("keydown", (e) => {
-  switch (e.key) {
-    case "ư":
-      transformControl.setMode("translate");
-      break;
-    case "w":
-      transformControl.setMode("translate");
-      break;
-    case "e":
-      transformControl.setMode("rotate");
-      break;
-    case "r":
-      transformControl.setMode("scale");
-      break;
-  }
-});
-
-const rayCaster = new THREE.Raycaster();
+// window.addEventListener("mousemove", (e) => {
+//   mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
+//   mousePosition.y = -(e.clientY / window.innerHeight) * 2 + 1;
+// });
 
 window.addEventListener("resize", () => {
   const width = window.innerWidth;
@@ -205,62 +124,6 @@ window.addEventListener("resize", () => {
 function animate() {
   requestAnimationFrame(animate);
 
-  // torus.position.y = 10 * Math.abs(Math.sin(step));
-  // spotLight.color.set(lightOptions.lightColor);
-  // spotLight.position.y = lightOptions.lightY;
-  // spotLight.position.x = lightOptions.lightX;
-  // spotLight.position.z = lightOptions.lightZ;
-  // spotLight.angle = lightOptions.angle;
-  // spotLight.intensity = lightOptions.intensity;
-  // spotLight.penumbra = lightOptions.penumbra;
-  // SLightHelper.update();
-  rayCaster.setFromCamera(mousePosition, camera);
-
-  const intersects = rayCaster.intersectObjects(scene.children);
-
-  // box.geometry.attributes.position.array[0] - 2;
-  // box.geometry.attributes.position.array[1] - 2;
-  // box.geometry.attributes.position.array[2];
-  // box.geometry.attributes.position.array[3] - 2;
-  // box.geometry.attributes.position.array[4] - 2;
-  // box.geometry.attributes.position.array[5];
-  // box.geometry.attributes.position.needsUpdate = true;
-  for (let id in intersects) {
-    // if (intersects[id].object.id === boxId) {
-    //   const intersectSide = rayCaster.intersectObject(box);
-    //   let index = Math.floor(intersectSide[0].faceIndex / 2);
-    //   // intersectSide[0].object.material[index].color.set(0xf0ef13);
-    //   window.addEventListener("click", (e) => {
-    //     transformControl.attach(intersects[id].object);
-    //     console.log(intersects[id].object.geometry);
-    //   });
-    //   // switch (index) {
-    //   //   case 4:
-    //   //     box.position.z -= 0.2;
-    //   //     break;
-    //   //   case 5:
-    //   //     box.position.z += 0.2;
-    //   //     break;
-    //   //   case 1:
-    //   //     box.position.x += 0.2;
-    //   //     break;
-    //   //   case 0:
-    //   //     box.position.x -= 0.2;
-    //   //     break;
-    //   //   case 2:
-    //   //     box.position.y -= 0.2;
-    //   //     break;
-    //   //   case 3:
-    //   //     box.position.y += 0.2;
-    //   //     break;
-    //   // }
-    // }
-    if (intersects[id].object.uuid === TorusUid) {
-      window.addEventListener("click", (e) => {
-        transformControl.attach(intersects[id].object);
-      });
-    }
-  }
   renderer.render(scene, camera);
 }
 animate();
