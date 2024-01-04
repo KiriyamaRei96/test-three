@@ -3,6 +3,9 @@ canvas{
   top: 0;
   left: 0;
 }
+body{
+  margin: 0;
+}
 /* .App{
   position: relative;
 } */
@@ -65,4 +68,17 @@ canvas{
 }    
 .d-none{
   display: none;
+}
+.selector{
+  position: fixed;
+  bottom: 5px;
+  width: 80%;
+  left: calc((100vw - 80%)/2);
+  height: 50px;
+  background-color: #00000080;
+  color: white;
+
+  padding: 0px 0.25rem;
+  border-radius: 8px;
+  transition: all 0.15s ease-in-out;
 }

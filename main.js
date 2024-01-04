@@ -21,16 +21,19 @@ const renderer = new THREE.WebGLRenderer({
 renderer.shadowMap.enabled = false;
 renderer.setPixelRatio(window.devicePixelRatio);
 const orbit = new OrbitControls(camera, renderer.domElement);
-camera.position.set(0.00001, 0.00001, 0.00001);
+// camera.position.set(0.00001, 0.00001, 0.00001);
+orbit.target.set(0.00001, 0.0, 0.00004);
+// camera.lookAt(0, 10, 0);
 orbit.minDistance = 0.00001;
 orbit.maxDistance = 0.00001;
-
+orbit.rotateSpeed = 0.6;
+// orbit.target(0, 0, 0);
 orbit.update();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 const sphereGeo = new THREE.SphereGeometry(6, 102, 102);
-
+sphereGeo.scale(-1, 1, 1);
 const sphereMat = new THREE.MeshStandardMaterial({
   side: THREE.DoubleSide,
 
@@ -39,8 +42,7 @@ const sphereMat = new THREE.MeshStandardMaterial({
 const sphere = new THREE.Mesh(sphereGeo, sphereMat);
 const manager = new THREE.LoadingManager();
 const loader = new THREE.TextureLoader(manager);
-camera.zoom = 0.5;
-camera.updateProjectionMatrix();
+
 function searchToObject() {
   var pairs = window.location.search.substring(1).split("&"),
     obj = {},
@@ -88,8 +90,11 @@ manager.onLoad = function () {
   // sphere.position.y = 10;
   // sphere.position.x = -30;
 };
+// chỉnh zoom
+camera.zoom = 1.2;
 
-let scale = 0.5;
+camera.updateProjectionMatrix();
+let scale = 1.2;
 function zoom(event) {
   event.preventDefault();
   if (3 >= scale && scale >= 0.01) {
