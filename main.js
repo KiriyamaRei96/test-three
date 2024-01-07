@@ -256,16 +256,15 @@ window.addEventListener("dblclick", (e) => {
 });
 // key hanlder
 document.addEventListener("keyup", (e) => {
+  const plane1 = planeGroup.children.find(
+    (item) => item.name === "plane1"
+  ).position;
+  const plane0 = planeGroup.children.find(
+    (item) => item.name === "plane0"
+  ).position;
   if (e.code === "Escape" && state === "hight") {
     // scene.remove(line);
     // const vex = [];
-
-    const plane1 = planeGroup.children.find(
-      (item) => item.name === "plane1"
-    ).position;
-    const plane0 = planeGroup.children.find(
-      (item) => item.name === "plane0"
-    ).position;
 
     // floor.position.setY(planeY);
     // const positionAttribute = line.geometry.getAttribute("position");
@@ -296,16 +295,23 @@ document.addEventListener("keyup", (e) => {
 
     // Extrude the shape if needed
     const shapeGeometry = new THREE.ExtrudeGeometry(shape, {
-      depth: plane0.distanceTo(plane1) + 0.45,
+      depth: plane0.distanceTo(plane1) + 0.4,
       bevelEnabled: false,
     });
+    const texture = new THREE.TextureLoader().load(
+      search.img ||
+        window.location.origin +
+          window.location.pathname.replace("index.html", "") +
+          "room.jpg"
+    );
+
     const shapeMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ff00,
       wireframe: true,
       depthTest: false,
     });
     const mesh = new THREE.Mesh(shapeGeometry, shapeMaterial);
-
+    mesh.material.depthTest = false;
     mesh.rotation.x = 0.5 * Math.PI;
 
     var center = new THREE.Vector3();
@@ -317,32 +323,36 @@ document.addEventListener("keyup", (e) => {
     mesh.position.copy({ x: center.x, y: -0.6, z: center.z });
     scene.add(mesh);
     line.visible = false;
+
+    state = "";
+  }
+  if (e.code === "Enter" && state === "hight") {
     // floor
-    // const geometry = new THREE.BufferGeometry();
-    // const material = new THREE.LineBasicMaterial({ vertexColors: true });
+    const geometry = new THREE.BufferGeometry();
+    const material = new THREE.LineBasicMaterial({ vertexColors: true });
 
-    // material.linewidth = 8; // Try different values
-    // material.depthTest = false;
-    // const floor = new THREE.Line(geometry, material);
-    // floor.isLineLoop = true;
+    material.linewidth = 8; // Try different values
+    material.depthTest = false;
+    const floor = new THREE.Line(geometry, material);
+    floor.isLineLoop = true;
 
-    // const positions = new Float32Array(vertices.length * 3);
-    // for (let i = 0; i < vertices.length; i++) {
-    //   positions[i * 3] = vertices[i].x;
-    //   positions[i * 3 + 1] = plane0.y - 0.4;
-    //   positions[i * 3 + 2] = vertices[i].z;
-    //   colors.push(255, 0, 0);
-    // }
+    const positions = new Float32Array(vertices.length * 3);
+    for (let i = 0; i < vertices.length; i++) {
+      positions[i * 3] = vertices[i].x;
+      positions[i * 3 + 1] = plane0.y - 0.4;
+      positions[i * 3 + 2] = vertices[i].z;
+      colors.push(255, 0, 0);
+    }
 
-    // floor.geometry.setAttribute(
-    //   "position",
-    //   new THREE.Float32BufferAttribute(positions, 3)
-    // );
-    // floor.geometry.setAttribute(
-    //   "color",
-    //   new THREE.Float32BufferAttribute(colors, 3)
-    // );
-    // scene.add(floor);
+    floor.geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3)
+    );
+    floor.geometry.setAttribute(
+      "color",
+      new THREE.Float32BufferAttribute(colors, 3)
+    );
+    scene.add(floor);
     // for (let i = 0; i < positionAttribute.count; i++) {
     //   const vertex = new THREE.Vector3();
     //   vertex.fromBufferAttribute(positionAttribute, i);
@@ -360,7 +370,6 @@ document.addEventListener("keyup", (e) => {
 
     // // Add the mesh to your scene
     // scene.add(mesh);
-    state = "";
   }
 });
 function animate() {
