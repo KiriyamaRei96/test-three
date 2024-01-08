@@ -2,12 +2,68 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon_512.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>Panoee 360 Free Hosting</title>
+    <meta
+      name="description"
+      content="Host your virtual tours effortlessly with Panoee's free hosting service using AWS S3, compatible with Krpano, Pano2vr, 3dvista, and Panoee virtual tours."
+    />
+    <!-- fb markup -->
+    <meta
+      property="og:url"
+      content="http://www.nytimes.com/2015/02/19/arts/international/when-great-minds-dont-think-alike.html"
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Panoee 360 Free Hosting" />
+    <meta
+      property="og:description"
+      content="Host your virtual tours effortlessly with Panoee's free hosting service using AWS S3, compatible with Krpano, Pano2vr, 3dvista, and Panoee virtual tours."
+    />
+    <meta property="og:image" content="thumbnail.jpg" />
   </head>
-  <body>
- <canvas id="bg"></canvas>
+  <body style="padding: 0; margin: 0; background: #ddd">
+    <div class="App">
+       <canvas id="bg"></canvas>
+      <div class="loader">
+        <div class="-spiner"></div>
+      </div>
+      <a
+      href="https://panoee.com"
+      target="_blank"
+      class="copyright"
+      style="
+        position: fixed;
+        bottom: 8px;
+        right: 8px;
+        display: flex;
+        flex-flow: column;
+        text-decoration: none;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 4px;
+        padding: 0 8px 8px;
+        gap: 4px;
+      "
+    >
+      <span
+        style="
+          font-size: 10px;
+          font-family: sans-serif;
+          color: #fff;
+          position: relative;
+          top: 8px;
+          left: 30px;
+        "
+        >360 Platform by</span
+      >
+      <img
+        style="width: 100px; height: auto; flex: 0 0 auto"
+        src="logo-white.png"
+        alt=""
+      />
+    </a>
+
+    </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
